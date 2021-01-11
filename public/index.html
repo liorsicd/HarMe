@@ -20,6 +20,7 @@
       href="https://fonts.googleapis.com/css?family=Material+Icons&display=block"
       rel="stylesheet"
     />
+    <script src="/src/index.js"></script>
     <script src="Tone.js"></script>
     <script src="tone-ui.js"></script>
     <script src="components.js"></script>
@@ -34,7 +35,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <img src="\logoHarme.jpg"  width="100px"/>
+    <img src="\logoHarme.jpg" width="100px" />
     <tone-example label="Step Sequencer">
       <tone-loader></tone-loader>
       <div id="content">
@@ -46,13 +47,14 @@
           max="240"
           value="120"
         ></tone-slider>
-        <tone-step-sequencer rows="7" columns="32"></tone-step-sequencer>
+        <tone-step-sequencer rows="8" columns="32"></tone-step-sequencer>
       </div>
     </tone-example>
 
     <script type="text/javascript">
       function playNote(row, time) {
         let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
+        note -= note === 73 ? 1 : 0;
         synth = new Tone.PolySynth().toDestination();
         synth.triggerAttackRelease(
           Tone.Frequency(note, "midi").toNote(),
@@ -78,6 +80,11 @@
         .addEventListener("trigger", ({ detail }) => {
           playNote(detail.row, detail.time);
         });
+
+      
+
+
+
     </script>
   </body>
 </html>
