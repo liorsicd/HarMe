@@ -1,1 +1,4 @@
-import * as Tone from "tone";
+
+import HarmMachine from "./harmMachine"
+var h = new HarmMachine();
+h.generateNGram(5)
