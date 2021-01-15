@@ -2,16 +2,6 @@
 
 class HarmMachine {
   constructor() {
-    this.valid_chords_map = {
-      C: { G: 0.25, F: 0.5, Am: 0.25 },
-      Dm: { G: 0.25, F: 0.5, Am: 0.25 },
-      Em: { G: 0.25, F: 0.5, Am: 0.25 },
-      F: { G: 0.25, F: 0.5, Am: 0.25 },
-      G: { G: 0.25, F: 0.5, Am: 0.25 },
-      Am: { G: 0.25, F: 0.5, Am: 0.25 },
-      Bdim: { G: 0.25, F: 0.5, Am: 0.25 },
-    };
-
     this.valid_chords_porg = [
       ["C", "Am", "F", "G7"],
       ["C", "Em", "F", "G7"],
@@ -24,33 +14,11 @@ class HarmMachine {
 
     this.probMap = {};
     for (let chordProg of this.valid_chords_porg) {
-      debugger;
       this.updateProbMap(chordProg);
     }
 
     this.convertToProb();
   }
-
-  // getProbOfChordSeq(chords) {
-  //   var ans = 1;
-  //   for (let index = 0; index < chords.length - 1; index++) {
-  //     let options = Object.keys(this.valid_chords_map[chords[index]]);
-  //     let probs = Object.values(this.valid_chords_map[chords[index]]);
-
-  //     let j = 0;
-  //     while (j < options.length && options[j] !== chords[index + 1]) {
-  //       j++;
-  //     }
-
-  //     if (j === options.length) {
-  //       return 0;
-  //     } else {
-  //       ans *= probs[j];
-  //     }
-  //   }
-
-  //   return ans;
-  // }
 
   generateNGram(n) {
     var nGram = {};
@@ -61,7 +29,6 @@ class HarmMachine {
       perm = perm.split("_");
       perm = perm.slice(0, perm.length - 1);
 
-      console.log(perm);
 
       for (let p of perm) {
         let prob = 1;
