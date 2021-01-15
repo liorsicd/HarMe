@@ -1,4 +1,4 @@
 
 import HarmMachine from "./harmMachine"
 var h = new HarmMachine();
-h.generateNGram(5)
+// console.log(h.generateNGram(3));

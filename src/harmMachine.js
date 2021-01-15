@@ -13,45 +13,44 @@ class HarmMachine {
     };
 
     this.valid_chords_porg = [
-      "C",
-      "Am",
-      "F",
-      "G",
-      "Am",
-      "Em",
-      "F",
-      "G",
-      "C",
-      "F",
-      "G",
-      "Am",
-      "C",
-      "F",
+      ["C", "Am", "F", "G7"],
+      ["C", "Em", "F", "G7"],
+      ["C", "F", "Am", "G7"],
+      ["C", "Am", "Dm", "G7"],
+      ["C", "G", "F", "G7"],
+      // ["Dm", "G", "C", "F", "Bdim", "E7", "Am"],
+      // ["Am", "C", "F", "E7"],
     ];
 
-    this.probMap = this.getProbMap(this.valid_chords_porg);
-  }
-
-  getProbOfChordSeq(chords) {
-    var ans = 1;
-    for (let index = 0; index < chords.length - 1; index++) {
-      let options = Object.keys(this.valid_chords_map[chords[index]]);
-      let probs = Object.values(this.valid_chords_map[chords[index]]);
-
-      let j = 0;
-      while (j < options.length && options[j] !== chords[index + 1]) {
-        j++;
-      }
-
-      if (j === options.length) {
-        return 0;
-      } else {
-        ans *= probs[j];
-      }
+    this.probMap = {};
+    for (let chordProg of this.valid_chords_porg) {
+      debugger;
+      this.updateProbMap(chordProg);
     }
 
-    return ans;
+    this.convertToProb();
   }
+
+  // getProbOfChordSeq(chords) {
+  //   var ans = 1;
+  //   for (let index = 0; index < chords.length - 1; index++) {
+  //     let options = Object.keys(this.valid_chords_map[chords[index]]);
+  //     let probs = Object.values(this.valid_chords_map[chords[index]]);
+
+  //     let j = 0;
+  //     while (j < options.length && options[j] !== chords[index + 1]) {
+  //       j++;
+  //     }
+
+  //     if (j === options.length) {
+  //       return 0;
+  //     } else {
+  //       ans *= probs[j];
+  //     }
+  //   }
+
+  //   return ans;
+  // }
 
   generateNGram(n) {
     var nGram = {};
@@ -63,7 +62,7 @@ class HarmMachine {
       perm = perm.slice(0, perm.length - 1);
 
       console.log(perm);
-      
+
       for (let p of perm) {
         let prob = 1;
         let perm_as_list = p.split(",");
@@ -72,10 +71,10 @@ class HarmMachine {
         }
         nGram[p] = prob;
       }
-     
     }
 
     console.log(nGram);
+    return nGram;
   }
 
   permutations(chord, m, prefix) {
@@ -92,11 +91,12 @@ class HarmMachine {
     }
   }
 
-  getProbMap(data) {
-    let map = {};
+  updateProbMap(data) {
+    debugger;
+    let map = this.probMap;
     //initialize
     for (let chord of data) {
-      if (map[chord] !== null) {
+      if (map[chord] == null) {
         map[chord] = {};
       }
     }
@@ -106,8 +106,11 @@ class HarmMachine {
       map[data[i]][data[i + 1]] =
         map[data[i]][data[i + 1]] == null ? 1 : map[data[i]][data[i + 1]] + 1;
     }
+    this.probMap = map;
+  }
 
-    //convert to prob
+  convertToProb() {
+    let map = this.probMap;
     for (let chord of Object.keys(map)) {
       let sum = 0;
       for (let nextChord of Object.keys(map[chord])) {
@@ -119,7 +122,7 @@ class HarmMachine {
       }
     }
 
-    return map;
+    this.probMap = map;
   }
 }
 
