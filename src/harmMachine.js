@@ -59,7 +59,6 @@ class HarmMachine {
   }
 
   updateProbMap(data) {
-    debugger;
     let map = this.probMap;
     //initialize
     for (let chord of data) {
