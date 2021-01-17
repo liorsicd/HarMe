@@ -36,9 +36,10 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <img src="\logoHarme.jpg" width="100px" />
-    <tone-example label="Step Sequencer">
+    <tone-example label="Step Sequencer" id="main">
       <tone-loader></tone-loader>
       <div id="content">
+        <button id="harme">HarMe!!</button>
         <tone-play-toggle></tone-play-toggle>
         <tone-slider
           label="tempo"
@@ -47,12 +48,17 @@
           max="240"
           value="120"
         ></tone-slider>
-        <tone-step-sequencer rows="8" columns="32"></tone-step-sequencer>
+        <tone-step-sequencer
+          rows="8"
+          columns="32"
+          width="100px"
+        ></tone-step-sequencer>
       </div>
     </tone-example>
 
     <script type="text/javascript">
       function playNote(row, time) {
+        const now = Tone.now();
         let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
         note -= note === 73 ? 1 : 0;
         synth = new Tone.PolySynth().toDestination();
@@ -61,6 +67,39 @@
           "16t",
           time
         );
+      }
+
+      function playChords() {
+        let chords = [
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+          [60, 63, 67],
+        ];
+        for (let c of chords) {
+          for (let i = 0; i < c.length; i++) {
+            c[i] = Tone.Frequency(c[i], "midi").toFrequency();
+          }
+        }
+
+        //play selected chord
+        if (col % 2 == 0) {
+          let chordToPlay = chords[col / 2];
+
+          synth.triggerAttackRelease(chordToPlay);
+        }
       }
 
       document
@@ -81,10 +120,107 @@
           playNote(detail.row, detail.time);
         });
 
-      
+      //dummy from generator
+      let chordsfromGen = [
+        [
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+          "C",
+        ],
+        [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+        ],
+        [
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+          "E",
+        ],
+      ];
 
+      let chordsToPlay = chordsfromGen[0];
 
+      //chords table
 
+      const table = document.createElement("table");
+      table.setAttribute("border", "1");
+      table.setAttribute("width", "600px");
+      for (let i = 0; i < 3; i++) {
+        let row = document.createElement("tr");
+
+        for (let j = 0; j < 16; j++) {
+          let col = document.createElement("td");
+          col.setAttribute("align", "center");
+          let btn = document.createElement("button");
+          let value = chordsfromGen[i][j];
+          btn.setAttribute("id", i + "," + j);
+          if (i == 0) {
+            btn.setAttribute("style", "background-color:blue;");
+          }
+          btn.appendChild(document.createTextNode(value));
+          btn.addEventListener("click", function () {
+            updateChordsToPlay(j, value);
+          });
+          col.appendChild(btn);
+
+          row.appendChild(col);
+        }
+        table.appendChild(row);
+      }
+
+      document.getElementById("main").appendChild(table);
+
+      function updateChordsToPlay(index, value) {
+        chordsToPlay[index] = value;
+        for (let i = 0; i < 3; i++) {
+          let currentChord = document.getElementById(i + "," + index);
+          if (currentChord.textContent === value) {
+            currentChord.setAttribute("style", "background-color:blue;");
+          } else {
+            currentChord.setAttribute("style", "background-color:none;");
+          }
+        }
+      }
     </script>
   </body>
 </html>
