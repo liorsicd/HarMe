@@ -4,6 +4,8 @@ class NotesToChord {
     this.chords = chords;
   }
 }
+
+
 class MelodyMachine {
   constructor() {
     this.notesToChordList = [

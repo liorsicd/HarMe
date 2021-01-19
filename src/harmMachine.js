@@ -8,18 +8,71 @@ class HarmMachine {
       ["C", "F", "Am", "G7"],
       ["C", "Am", "Dm", "G7"],
       ["C", "G", "F", "G7"],
-      // ["Dm", "G", "C", "F", "Bdim", "E7", "Am"],
-      // ["Am", "C", "F", "E7"],
+      ["Dm", "G", "C", "F", "Bdim", "E7", "Am"],
+      ["Am", "C", "F", "E7"],
     ];
-
-    this.probMap = {};
-    for (let chordProg of this.valid_chords_porg) {
-      this.updateProbMap(chordProg);
-    }
-
-    this.convertToProb();
   }
 
+
+getNgram(sequence, n) {
+  var ngramsArray = [];
+  for (var i = 0; i < sequence.length - (n - 1); i++) {
+      var subNgramsArray = [];
+      for (var j = 0; j < n; j++) {
+          subNgramsArray.push(sequence[i + j])
+      }
+      ngramsArray.push(subNgramsArray);
+  }
+  return ngramsArray
+}
+
+createProbabilitiesMap(n) {
+  let sequence = this.valid_chords_porg;
+  let result = {}
+  let items = []
+  for (let prog of sequence){
+    items = items.concat(this.getNgram(prog, n));
+  }
+
+  for (let subarray of items) {
+      let x = subarray[0], y = subarray[1]
+      if (result[x] === undefined) {
+          result[x] = []
+      } 
+      result[x].push(y)
+  }
+  // { 60: [62, 62, 62, 65], 64: [64, 64, 62, 62]}
+  Object.keys(result).map(key => {
+      result[key] = this.getProbabilities(result[key])
+  })
+  
+  return result
+}
+
+getProbabilities(sequence) {
+  let freq = this.getFrequencyMap(sequence)
+  let length = Object.values(freq).reduce((a, b) => a + b);
+  Object.keys(freq).map(key => {
+      freq[key] /= length  // 3 > 3/4, 1 > 1/4
+  })
+
+  return freq;
+}
+
+getFrequencyMap(sequence) {
+  let freq = {}
+  for (let item of sequence) {
+      if (freq[item]) freq[item]++
+      else  freq[item] = 1
+  }
+
+  return freq;
+}
+
+
+
+
+/*
   generateNGram(n) {
     var nGram = {};
 
@@ -90,6 +143,8 @@ class HarmMachine {
 
     this.probMap = map;
   }
+  */
+ 
 }
 
 export default HarmMachine;
