@@ -76,10 +76,10 @@
       var synth = new Tone.PolySynth().toDestination();
 
 //play selected chord
-      function playChords() {
+      function playChords(time) {
         
         let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
-        synth.triggerAttackRelease(chordToPlay, "4t");
+        synth.triggerAttackRelease(chordToPlay, "4t", time);
         currentCol++;
         if (currentCol === 16) {
           currentCol = 0;
@@ -151,7 +151,7 @@
       }
 
       Tone.Transport.scheduleRepeat(function (time) {
-        playChords();
+        playChords(time);
       }, "4n");
       document
         .querySelector("tone-play-toggle")
