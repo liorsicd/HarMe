@@ -74,6 +74,13 @@ class MelodyMachine {
     ];
   }
 
+
+  getChordsForMelody(notes){
+    
+    //get list of notes - input melody
+    //return - all possible chords progressions.
+  }
+
   getNMaxLikelyChords(notes, N) {
     let ans = this.notesToChordList.find(
       (e) => e.notes[0] === notes[0] && e.notes[1] === notes[1]

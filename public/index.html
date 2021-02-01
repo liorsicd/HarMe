@@ -51,7 +51,6 @@
         <tone-step-sequencer
           rows="8"
           columns="32"
-          width="100px"
           id ="stepSeq"
         ></tone-step-sequencer>
       </div>
@@ -59,6 +58,7 @@
 
     <script type="text/javascript">
       function playNote(row, time) {
+        console.log(Tone.Transport.context   )
         const now = Tone.now();
         let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
         note -= note === 73 ? 1 : 0;
@@ -69,7 +69,7 @@
           time
         );
 
-        console.log(time , row)
+        //console.log(time , row)
         
       }
 
@@ -105,6 +105,7 @@
           synth.triggerAttackRelease(chordToPlay);
         }
       }
+
 
       document
         .querySelector("tone-play-toggle")
@@ -226,5 +227,6 @@
         }
       }
     </script>
+
   </body>
 </html>
