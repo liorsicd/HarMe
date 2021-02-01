@@ -51,14 +51,15 @@
         <tone-step-sequencer
           rows="8"
           columns="32"
-          id ="stepSeq"
+          id="stepSeq"
         ></tone-step-sequencer>
       </div>
     </tone-example>
 
     <script type="text/javascript">
+
+
       function playNote(row, time) {
-        console.log(Tone.Transport.context   )
         const now = Tone.now();
         let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
         note -= note === 73 ? 1 : 0;
@@ -68,51 +69,99 @@
           "16t",
           time
         );
-
-        //console.log(time , row)
-        
       }
 
+
+      var currentCol = 0;
+      var synth = new Tone.PolySynth().toDestination();
+
+//play selected chord
       function playChords() {
-        let chords = [
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-          [60, 63, 67],
-        ];
-        for (let c of chords) {
-          for (let i = 0; i < c.length; i++) {
-            c[i] = Tone.Frequency(c[i], "midi").toFrequency();
+        
+        let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
+        synth.triggerAttackRelease(chordToPlay, "4t");
+        currentCol++;
+        if (currentCol === 16) {
+          currentCol = 0;
+        }
+      }
+      const NOTE_TO_NUM = {
+        C: 60,
+        "C#": 61,
+        D: 62,
+        "D#": 63,
+        Eb: 63,
+        E: 64,
+        F: 65,
+        "F#": 66,
+        Gb: 66,
+        G: 67,
+        "G#": 68,
+        Ab: 68,
+        A: 69,
+        "A#": 70,
+        Bb: 70,
+        B: 71,
+      };
+
+      const CHORD_FORM = {
+        major: [0, 4, 7],
+        minor: [0, 3, 7],
+      };
+
+      function chordTranslator(chordString) {
+        let chordBase = chordString[0];
+        chordBase +=
+          chordString.length > 1 &&
+          (chordString[1] === "b" || chordString[1] == "#")
+            ? chordString[1]
+            : "";
+        let chord = [];
+        let len = chordString.length;
+        //major
+        if (len == 1 || (len == 2 && chordBase.length == 2)) {
+          for (let c of CHORD_FORM["major"]) {
+            chord.push(NOTE_TO_NUM[chordBase] + c);
+          }
+        } else if (
+          (len == 2 && chordString[1] === "m") ||
+          (len == 3 && chordString[2] === "m")
+        ) {
+          for (let c of CHORD_FORM["minor"]) {
+            chord.push(NOTE_TO_NUM[chordBase] + c);
           }
         }
 
-        //play selected chord
-        if (col % 2 == 0) {
-          let chordToPlay = chords[col / 2];
-
-          synth.triggerAttackRelease(chordToPlay);
+        for (let i = 0; i < chord.length; i++) {
+          chord[i] = Tone.Frequency(chord[i], "midi").toFrequency();
         }
+
+        return chord;
       }
 
+      function Translator(chordsLists) {
+        let translatedChords = {};
+        for (let l of chordsLists) {
+          for (let c of l) {
+            translatedChords[c] = chordTranslator(c);
+          }
+        }
 
+        return translatedChords;
+      }
+
+      Tone.Transport.scheduleRepeat(function (time) {
+        playChords();
+      }, "4n");
       document
         .querySelector("tone-play-toggle")
         .addEventListener("start", () => Tone.Transport.start());
       document
         .querySelector("tone-play-toggle")
-        .addEventListener("stop", () => Tone.Transport.stop());
+        .addEventListener("stop", () => {
+          Tone.Transport.stop();
+          currentCol=0;}
+          );
       document
         .querySelector("tone-slider")
         .addEventListener(
@@ -126,7 +175,7 @@
         });
 
       //dummy from generator
-      let chordsfromGen = [
+      var chordsfromGen = [
         [
           "C",
           "C",
@@ -182,7 +231,7 @@
           "E",
         ],
       ];
-
+      let chordsTranslation = Translator(chordsfromGen);
       let chordsToPlay = chordsfromGen[0];
 
       //chords table
@@ -217,6 +266,7 @@
 
       function updateChordsToPlay(index, value) {
         chordsToPlay[index] = value;
+
         for (let i = 0; i < 3; i++) {
           let currentChord = document.getElementById(i + "," + index);
           if (currentChord.textContent === value) {
@@ -227,6 +277,5 @@
         }
       }
     </script>
-
   </body>
 </html>
