@@ -187,11 +187,12 @@
           .shadowRoot.childNodes[2].querySelectorAll(".cell");
 
         cells.forEach((item) => {
-          //item.onclick = null;
-          item.addEventListener("click", function (e) {
+         
+          item.addEventListener("mousedown", function (e) {
             seqClickHandler(e);
           });
 
+          
            
         });
 
