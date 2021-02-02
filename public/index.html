@@ -57,8 +57,6 @@
     </tone-example>
 
     <script type="text/javascript">
-
-
       function playNote(row, time) {
         const now = Tone.now();
         let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
@@ -71,13 +69,20 @@
         );
       }
 
-
       var currentCol = 0;
       var synth = new Tone.PolySynth().toDestination();
 
-//play selected chord
+      //get sequncer object as list
+      var sequencer = [];
+      var listOfCols = document
+        .getElementById("stepSeq")
+        .shadowRoot.childNodes[2].querySelectorAll(".column");
+      for (let i = 0; i < listOfCols.length; i++) {
+        sequencer.push(listOfCols[i].querySelectorAll(".cell"));
+      }
+
+      //play selected chord
       function playChords(time) {
-        
         let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
         synth.triggerAttackRelease(chordToPlay, "4t", time);
         currentCol++;
@@ -160,14 +165,25 @@
         .querySelector("tone-play-toggle")
         .addEventListener("stop", () => {
           Tone.Transport.stop();
-          currentCol=0;}
-          );
+          currentCol = 0;
+        });
       document
         .querySelector("tone-slider")
         .addEventListener(
           "input",
           (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
         );
+
+      var cells = document
+        .getElementById("stepSeq")
+        .shadowRoot.childNodes[2].querySelectorAll(".cell");
+
+      cells.forEach((item) => {
+        item.addEventListener("click", function (e) {
+          updateNotestoHarmonize(e);
+        });
+      });
+
       document
         .querySelector("tone-step-sequencer")
         .addEventListener("trigger", ({ detail }) => {
@@ -275,6 +291,46 @@
             currentChord.setAttribute("style", "background-color:none;");
           }
         }
+      }
+      var notesToHarmonize = new Array(32);
+
+      function updateNotestoHarmonize(cell) {
+        var parent = cell.path[0].parentNode;
+        var row = Array.prototype.indexOf.call(parent.children, cell.path[0]);
+        var parent = cell.path[1].parentNode;
+        var col = Array.prototype.indexOf.call(parent.children, cell.path[1]);
+
+        let note = row < 5 ? 71 - (row - 1) * 2 : 74 - row * 2;
+        note -= note === 73 ? 1 : 0;
+        //debugger;
+        if (notesToHarmonize[col] != null) {
+          if (notesToHarmonize[col] == note) {
+            notesToHarmonize[col] = null;
+          } else {
+            singleInColHandler(col, row);
+            notesToHarmonize[col] = note;
+          }
+        } else {
+          notesToHarmonize[col] = note;
+        }
+        console.log(notesToHarmonize);
+      }
+
+      function singleInColHandler(col, newCell) {
+        var divCol = sequencer[col];
+        for (let i = 0; i < divCol.length; i++) {
+          if (divCol[i].attributes.length > 1 && i != newCell) {
+            divCol[i].removeAttribute("filled");
+
+            break;
+          }
+        }
+      }
+
+
+      function harmi(){
+
+
       }
     </script>
   </body>
