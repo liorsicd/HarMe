@@ -15,7 +15,7 @@ class Generator {
   }
 
   translateNumbersToNotes(notesAsNumbers){
-    //get list of notes as numbers
+    //get list of notes as numbers - neta
     //return notes as letters - capital.
 
   }
