@@ -20,10 +20,15 @@
       href="https://fonts.googleapis.com/css?family=Material+Icons&display=block"
       rel="stylesheet"
     />
-    <script src="/src/index.js"></script>
+  
     <script src="Tone.js"></script>
     <script src="tone-ui.js"></script>
     <script src="components.js"></script>
+    <script type="module", src="/src/generator.js">
+      
+    </script>
+      
+    </script>
     <style type="text/css">
       tone-transport {
         margin-bottom: 10px;
@@ -143,7 +148,7 @@
       var synth = new Tone.PolySynth().toDestination();
       var sequencerElements = [];
       var chordsTranslation = Translator(chordsfromGen);
-      var chordsToPlay = chordsfromGen[0];
+      var chordsToPlay = chordsfromGen[0].slice();
       var notesToHarmonize = new Array(32);
       var sequencer = new Array(32);
 
@@ -187,13 +192,9 @@
           .shadowRoot.childNodes[2].querySelectorAll(".cell");
 
         cells.forEach((item) => {
-         
           item.addEventListener("mousedown", function (e) {
             seqClickHandler(e);
           });
-
-          
-           
         });
 
         document
@@ -277,6 +278,7 @@
       function createChordTable() {
         const table = document.createElement("table");
         table.setAttribute("border", "1");
+        table.setAttribute("id", "chordsTable");
         table.setAttribute("width", "600px");
         for (let i = 0; i < 3; i++) {
           let row = document.createElement("tr");
@@ -291,8 +293,8 @@
               btn.setAttribute("style", "background-color:blue;");
             }
             btn.appendChild(document.createTextNode(value));
-            btn.addEventListener("click", function () {
-              updateChordsToPlay(j, value);
+            btn.addEventListener("click", function (e) {
+              updateChordsToPlay(j, e.path[0], e.path[0].id[0]);
             });
             col.appendChild(btn);
 
@@ -303,11 +305,11 @@
         document.getElementById("main").appendChild(table);
       }
 
-      function updateChordsToPlay(index, value) {
-        chordsToPlay[index] = value;
+      function updateChordsToPlay(index, button, row) {
+        chordsToPlay[index] = chordsfromGen[row][index];
         for (let i = 0; i < 3; i++) {
           let currentChord = document.getElementById(i + "," + index);
-          if (currentChord.textContent === value) {
+          if (currentChord.textContent === button.textContent) {
             currentChord.setAttribute("style", "background-color:blue;");
           } else {
             currentChord.setAttribute("style", "background-color:none;");
@@ -321,8 +323,6 @@
         parent = cell.path[1].parentNode;
         var col = Array.prototype.indexOf.call(parent.children, cell.path[1]);
         var filledIndex = getFilledCellIndex(col);
-
-        
 
         var isFilled = filledIndex === -1 ? true : false;
         sequencer[col][row] = isFilled;
@@ -346,24 +346,8 @@
         return -1;
       }
 
-      /*
-      function fillCell(col, row) {
-        var cell = sequencerElements[col][row];
-        cell.setAttribute("filled", null);
-        sequencer[col][row] = true;
-      }
-
-      function unfillCol(col) {
-        var column = sequencerElements[col];
-        for (let c = 0; c < column.length; c++) {
-          column[c].removeAttribute("filled");
-          sequencer[col][c] = false;
-        }
-      }
-*/
       function getNotesToHarmonize() {
         var notesToHarm = [];
-        debugger;
         for (let i = 0; i < sequencer.length; i++) {
           var row = getFilledCellIndex(i);
           if (row !== -1) {
@@ -379,11 +363,35 @@
       }
 
       function harme() {
-        console.log(getNotesToHarmonize());
+        
         //send notesToHarmonize to generator
         // get list of chords (2 lists of 8)
-        // update chords table in sequncer - neta
+        chordsFromGen = generator.generateHarmony(getNotesToHarmonize());
+
+        // update chords table in sequncer
+        var tmp = [];
+
+        tmp.push(chordsfromGen[2]);
+        tmp.push(chordsfromGen[1]);
+        tmp.push(chordsfromGen[0]);
+
+        chordsfromGen = tmp;
+        chordsToPlay = chordsfromGen[0].slice();
+
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 16; j++) {
+            let button = document.getElementById(i + "," + j);
+            button.textContent = chordsfromGen[i][j];
+            if (i == 0) {
+              button.setAttribute("style", "background-color:blue;");
+            } else {
+              button.setAttribute("style", "background-color:none;");
+            }
+          }
+        }
       }
     </script>
+
+    
   </body>
 </html>

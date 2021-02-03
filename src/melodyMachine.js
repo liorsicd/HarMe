@@ -8,6 +8,19 @@ class NotesToChord {
 class MelodyMachine {
   constructor() {
     this.notesToChordList = [
+      
+      new NotesToChord([-1, "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, "D"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, "E"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, "F"], { C: 0.5, Am: 0.23, Em: 0.9 }),
+      new NotesToChord([-1, "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord([-1, -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
+
+      
+      
+      
       //C
       new NotesToChord(["C", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["C", "D"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -16,6 +29,7 @@ class MelodyMachine {
       new NotesToChord(["C", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["C", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["C", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["C", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //D
       new NotesToChord(["D", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -25,6 +39,7 @@ class MelodyMachine {
       new NotesToChord(["D", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["D", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["D", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["D", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //E
       new NotesToChord(["E", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -34,6 +49,7 @@ class MelodyMachine {
       new NotesToChord(["E", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["E", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["E", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["E", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //F
       new NotesToChord(["F", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -43,6 +59,7 @@ class MelodyMachine {
       new NotesToChord(["F", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["F", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["F", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["F", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //G
       new NotesToChord(["G", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -52,6 +69,7 @@ class MelodyMachine {
       new NotesToChord(["G", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["G", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["G", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["G", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //A
       new NotesToChord(["A", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -61,6 +79,7 @@ class MelodyMachine {
       new NotesToChord(["A", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["A", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["A", "B"], { F: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["A", -1], { C: 0.33, Am: 0.33, Em: 0.33 }),
 
       //B
       new NotesToChord(["B", "C"], { C: 0.33, Am: 0.33, Em: 0.33 }),
@@ -70,6 +89,7 @@ class MelodyMachine {
       new NotesToChord(["B", "G"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["B", "A"], { C: 0.33, Am: 0.33, Em: 0.33 }),
       new NotesToChord(["B", "B"], { C: 0.33, Am: 0.33, Em: 0.33 }),
+      new NotesToChord(["B", -1], { C: 0.33, Am: 0.33, Em: 0.33 })
     ];
   }
   
@@ -104,14 +124,14 @@ class MelodyMachine {
     return progressions;
   }
 
-  getNMaxLikelyChords(notes, N) {
-    let ans = this.notesToChordList.find(
-      (e) => e.notes[0] === notes[0] && e.notes[1] === notes[1]
-    );
+  // getNMaxLikelyChords(notes, N) {
+  //   let ans = this.notesToChordList.find(
+  //     (e) => e.notes[0] === notes[0] && e.notes[1] === notes[1]
+  //   );
 
-    ans = Object.keys(ans.chords).sort((a, b) => ans.chords[b] - ans.chords[a]);
-    ans = N < 0 || N >= ans.length ? ans : ans.slice(0, N);
-    return ans;
-  }
+  //   ans = Object.keys(ans.chords).sort((a, b) => ans.chords[b] - ans.chords[a]);
+  //   ans = N < 0 || N >= ans.length ? ans : ans.slice(0, N);
+  //   return ans;
+  // }
 }
 export default MelodyMachine;
