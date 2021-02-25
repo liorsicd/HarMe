@@ -1,6 +1,5 @@
 import Generator from "./generator";
-import * as Tone from 'tone';
-
+import * as Tone from "tone";
 
 const NOTE_TO_NUM = {
   C: 60,
@@ -84,55 +83,81 @@ var chordsFromGen = [
   ],
 ];
 var currentCol = 0;
+/*
+const midiNotes = []
+midiNotes.push(await Midi.fromUrl("/src/midi/C3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/D3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/E3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/F3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/G3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/A3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/B3.mid"));
+midiNotes.push(await Midi.fromUrl("/src/midi/C4.mid"));
+
+
+const keys = new Tone.Players({
+  urls: {
+    0: "C3.mp3",
+    1: "D3.mp3",
+    2: "E3.mp3",
+    3: "F3.mp3",
+    4: "G3.mp3",
+    5: "A3.mp3",
+    6: "B3.mp3",
+    7: "C4.mp3",
+  },
+  fadeOut: "64n",
+  baseUrl: "/src/midi",
+}).toDestination();
+
+*/
+var rev = new Tone.Reverb(2).toDestination();
 var synth = new Tone.PolySynth().toDestination();
+var chordSynth = new Tone.PolySynth().toDestination().connect(rev);
+synth.volume.value = 10;
+
+chordSynth.volume.value = -5;
 var sequencerElements = [];
-var chordsTranslation = Translator(chordsFromGen);
-var chordsToPlay = chordsFromGen[0].slice();
-//var notesToHarmonize = new Array(32);
+var chordsTranslation = null;
+var chordsToPlay = null;
 var sequencer = new Array(32);
 
 window.addEventListener("load", () => initialize());
 
 function initialize() {
-  
-  //get sequncer object as list
+  //get sequencer object as list
   var listOfCols = document
     .getElementById("stepSeq")
     .shadowRoot.childNodes[2].querySelectorAll(".column");
   for (let i = 0; i < listOfCols.length; i++) {
     sequencerElements.push(listOfCols[i].querySelectorAll(".cell"));
   }
-  
-  for(let i=0; i<sequencerElements.length; i++){
-    for (let j =0; j<sequencerElements[i].length; j++){
-      sequencerElements[i][j].setAttribute("id", i+","+j)
-      
-    } 
+
+  for (let i = 0; i < sequencerElements.length; i++) {
+    for (let j = 0; j < sequencerElements[i].length; j++) {
+      sequencerElements[i][j].setAttribute("id", i + "," + j);
+    }
   }
-  document
-  .querySelector("tone-play-toggle")
-  .addEventListener("start", () => {
+  document.querySelector("tone-play-toggle").addEventListener("start", () => {
     window.transport.start();
-    console.log()
   });
-document
-  .querySelector("tone-play-toggle")
-  .addEventListener("stop", () => {
+  document.querySelector("tone-play-toggle").addEventListener("stop", () => {
     window.transport.stop();
     currentCol = 0;
   });
 
+  document
+    .querySelector("tone-slider")
+    .addEventListener(
+      "input",
+      (e) => (Tone.Transport.bpm.value = parseFloat(e.target.value))
+    );
 
-  document.querySelector("tone-slider").addEventListener("input", (e) => Tone.Transport.bpm.value = parseFloat(e.target.value));
-  
   window.transport.scheduleRepeat(function (time) {
     playChords(time);
   }, "4n");
 
-  document
-    .getElementById("harme")
-    .addEventListener("click", () => harme());
-
+  document.getElementById("harme").addEventListener("click", () => harme());
 
   var cells = document
     .getElementById("stepSeq")
@@ -149,8 +174,6 @@ document
     .addEventListener("trigger", ({ detail }) => {
       playNote(detail.row, detail.time);
     });
-  
-  createChordTable();
 
   for (let c = 0; c < sequencer.length; c++) {
     sequencer[c] = new Array(8);
@@ -160,9 +183,9 @@ document
   }
 }
 
-
 function playNote(row, time) {
-  //const now = Tone.now();
+  // keys.player(row).start(time, 0, "16t");
+
   let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
   note -= note === 73 ? 1 : 0;
   synth = new Tone.PolySynth().toDestination();
@@ -174,20 +197,20 @@ function playNote(row, time) {
 }
 
 function playChords(time) {
-  
-  let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
-  synth.triggerAttackRelease(chordToPlay, "4t", time);
-  currentCol++;
-  if (currentCol === 16) {
-    currentCol = 0;
+  if (chordsTranslation !== null) {
+    let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
+    chordSynth.triggerAttackRelease(chordToPlay, "4t", time);
+    currentCol++;
+    if (currentCol === 16) {
+      currentCol = 0;
+    }
   }
 }
 
 function chordTranslator(chordString) {
   let chordBase = chordString[0];
   chordBase +=
-    chordString.length > 1 &&
-    (chordString[1] === "b" || chordString[1] === "#")
+    chordString.length > 1 && (chordString[1] === "b" || chordString[1] === "#")
       ? chordString[1]
       : "";
   let chord = [];
@@ -258,7 +281,7 @@ function updateChordsToPlay(index, button, row) {
   chordsToPlay[index] = chordsFromGen[row][index];
   for (let i = 0; i < 3; i++) {
     let currentChord = document.getElementById(i + "," + index);
-    if (currentChord.textContent === button.textContent) {
+    if (i === Number(row)) {
       currentChord.setAttribute("style", "background-color:blue;");
     } else {
       currentChord.setAttribute("style", "background-color:none;");
@@ -312,17 +335,18 @@ function getNotesToHarmonize() {
 }
 
 function harme() {
-  
+  if (chordsToPlay === null) {
+    createChordTable();
+  }
   //send notesToHarmonize to generator
-  // get list of chords (2 lists of 8)
-  
+  // get list of chords
   var generator = new Generator();
+  
   chordsFromGen = generator.generateHarmony(getNotesToHarmonize());
-  console.log(chordsFromGen)
-  // update chords table in sequncer
+  console.log(chordsFromGen);
+  chordsTranslation = Translator(chordsFromGen);
 
-
-
+  // update chords table in sequencer
   chordsToPlay = chordsFromGen[0].slice();
 
   for (let i = 0; i < 3; i++) {
@@ -339,8 +363,3 @@ function harme() {
   //console.log(chordsToPlay);
   chordsTranslation = Translator(chordsFromGen);
 }
-
-
-
-
-

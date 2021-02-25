@@ -2,7 +2,7 @@
 
 class HarmMachine {
   constructor() {
-    this.valid_chords_porg = [
+    this.valid_chords_prog = [
       ["C", "C", "F", "C", "Dm", "C", "G", "C"],
       ["C", "Am", "F", "G"],
       ["C", "Em", "F", "G"],
@@ -31,9 +31,24 @@ class HarmMachine {
       ["C", "G", "Am", "F"],
       ["C","G","Am","Em","F","C","F","G"]
     ];
+
+    this.valid_chords_prog = this.valid_chords_prog.concat(this.duplicateProg());
+    console.log(this.valid_chords_prog);
+    
   }
 
-
+duplicateProg(){
+  var dupProgs = []
+  for(let prog of this.valid_chords_prog){
+    let dup = []
+    for(let c of prog){
+      dup.push(c);
+      dup.push(c);
+    }
+    dupProgs.push(dup);
+  }
+  return dupProgs;
+}
 getNgram(sequence, n) {
   var ngramsArray = [];
   for (var i = 0; i < sequence.length - (n - 1); i++) {
@@ -47,7 +62,7 @@ getNgram(sequence, n) {
 }
 
 createProbabilitiesMap(n) {
-  let sequence = this.valid_chords_porg;
+  let sequence = this.valid_chords_prog;
   let result = {}
   let items = []
   for (let prog of sequence){
