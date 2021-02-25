@@ -7,7 +7,7 @@ import MelodyMachine from "./melodyMachine.js";
 import * as Tone from "tone";
 
 //n-gram parameter
-const N = 3;
+const N = 3 ;
 class Generator {
   constructor() {
     this.melodyM = new MelodyMachine();
@@ -47,11 +47,12 @@ class Generator {
       }
 
       harm.sort((a, b) => b.prob - a.prob);
+    
       harm = harm.slice(0, 3);
       harmonies.push(harm);
       i++;
     }
-
+    
     var concatHarm = [];
     for (let i = 0; i < harmonies[0].length; i++) {
       concatHarm.push(harmonies[0][i].chords.concat(harmonies[1][i].chords));
