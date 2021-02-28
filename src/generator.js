@@ -1,13 +1,14 @@
 // get input from user - seq of notes
 // receive chord seq from mm
 //check chord seq is good (harm Machine)
-
 import HarmMachine from "./harmMachine";
 import MelodyMachine from "./melodyMachine.js";
 import * as Tone from "tone";
 
 //n-gram parameter
-const N = 3 ;
+const N = 3;
+//similarity parameter (0 to 8)
+const SIMILARITY_VAR = 4;
 class Generator {
   constructor() {
     this.melodyM = new MelodyMachine();
@@ -29,7 +30,6 @@ class Generator {
   }
 
   generateHarmony(notes) {
-   
     var harmonies = [];
     let i = 0;
     while (i < 2) {
@@ -48,18 +48,42 @@ class Generator {
       }
 
       harm.sort((a, b) => b.prob - a.prob);
-    
-      harm = harm.slice(0, 3);
-      harmonies.push(harm);
+
+      let differentHarms = [harm[0]];
+      for (let h = 1; h < harm.length; h++) {
+        //debugger;
+        if (
+          this.IsNotTooSimilar(differentHarms[differentHarms.length - 1], harm[h])
+        ) {
+          differentHarms.push(harm[h]);
+          if (differentHarms.length === 3) {
+            break;
+          }
+        }
+      }
+
+     
+     
+      harmonies.push(differentHarms);
       i++;
     }
-    
+
     var concatHarm = [];
     for (let i = 0; i < harmonies[0].length; i++) {
       concatHarm.push(harmonies[0][i].chords.concat(harmonies[1][i].chords));
     }
 
     return concatHarm;
+  }
+
+  IsNotTooSimilar(h1, h2) {
+    let counter = 0;
+    for (let i = 0; i < h1.chords.length; i++) {
+      if (h1.chords[i] === h2.chords[i]) {
+        counter++;
+      }
+    }
+    return counter <= SIMILARITY_VAR;
   }
 }
 export default Generator;
