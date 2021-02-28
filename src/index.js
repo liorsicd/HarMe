@@ -115,13 +115,14 @@ var rev = new Tone.Reverb(2).toDestination();
 var synth = new Tone.PolySynth().toDestination();
 var chordSynth = new Tone.PolySynth().toDestination().connect(rev);
 synth.volume.value = 10;
+var lastCol = -1;
 
 chordSynth.volume.value = -5;
 var sequencerElements = [];
 var chordsTranslation = null;
 var chordsToPlay = null;
 var sequencer = new Array(32);
-
+//var mouseDown = false;
 window.addEventListener("load", () => initialize());
 
 function initialize() {
@@ -158,7 +159,15 @@ function initialize() {
   }, "4n");
 
   document.getElementById("harme").addEventListener("click", () => harme());
-
+  document.getElementById("clear").addEventListener("click", () => window.location.reload())
+  /*
+  document.getElementById("stepSeq").addEventListener("mousedown",e =>{
+    mouseDown= true;
+  })
+  document.getElementById("stepSeq").addEventListener("mouseup",e =>{
+    mouseDown= false;
+  })
+  */
   var cells = document
     .getElementById("stepSeq")
     .shadowRoot.childNodes[2].querySelectorAll(".cell");
@@ -167,8 +176,11 @@ function initialize() {
     item.addEventListener("mousedown", function (e) {
       seqClickHandler(e);
     });
-  });
 
+    item.addEventListener("mouseup", function(e){
+      unableAll();
+    })
+  });
   document
     .querySelector("tone-step-sequencer")
     .addEventListener("trigger", ({ detail }) => {
@@ -307,8 +319,30 @@ function seqClickHandler(cell) {
       }
     }
   }
+  disableAll(col);
+  lastCol = col;
 }
 
+
+function disableAll(col) {
+  for (let i = 0; i < sequencerElements.length; i++) {
+    for (let j = 0; j < sequencerElements[i].length; j++) {
+      if (i !== col) {
+        sequencerElements[i][j].setAttribute("disabled", null);
+      }
+    }
+  }
+}
+
+function unableAll(){
+  for (let i = 0; i < sequencerElements.length; i++) {
+    for (let j = 0; j < sequencerElements[i].length; j++) {
+      if (i !== lastCol) {
+        sequencerElements[i][j].removeAttribute("disabled", null);
+      }
+    }
+  }
+}
 function getFilledCellIndex(col) {
   for (let i = 0; i < sequencer[col].length; i++) {
     if (sequencer[col][i] === true) {
@@ -341,9 +375,9 @@ function harme() {
   //send notesToHarmonize to generator
   // get list of chords
   var generator = new Generator();
-  
+
   chordsFromGen = generator.generateHarmony(getNotesToHarmonize());
-  console.log(chordsFromGen);
+  
   chordsTranslation = Translator(chordsFromGen);
 
   // update chords table in sequencer

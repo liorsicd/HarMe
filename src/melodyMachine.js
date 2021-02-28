@@ -50,12 +50,12 @@ class MelodyMachine {
       //F
       new NotesToChord(["F", "C"], { F: 0.33, Fm: 0.33, Dm: 0.33 }),
       new NotesToChord(["F", "D"], { Dm: 0.33, Bdim: 0.33, Bb: 0.33 }),
-      new NotesToChord(["F", "E"], { F: 0.33, Dm: 0.33, F: 0.33 }),
+      new NotesToChord(["F", "E"], { F: 0.33, Dm: 0.33, Em: 0.33 }),
       new NotesToChord(["F", "F"], { F: 0.33, Dm: 0.5, Bdim: 0.33 }),
       new NotesToChord(["F", "G"], { F: 0.33, G: 0.33, Dm: 0.33 }),
       new NotesToChord(["F", "A"], { F: 0.33, Bdim: 0.33, Dm: 0.33 }),
       new NotesToChord(["F", "B"], { Bdim: 0.33, Em: 0.33, G: 0.33 }),
-      new NotesToChord(["F", -1], { F: 0.33, Dm: 0.33, Bdim: 0.33 }),
+      new NotesToChord(["F", -1], { F: 0.33, Dm: 0.33, Bdim : 0.33 }),
 
       //G
       new NotesToChord(["G", "C"], { G: 0.33, Am: 0.33, Cm: 0.33 }),

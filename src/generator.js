@@ -29,7 +29,7 @@ class Generator {
   }
 
   generateHarmony(notes) {
-    debugger;
+   
     var harmonies = [];
     let i = 0;
     while (i < 2) {

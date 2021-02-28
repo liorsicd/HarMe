@@ -4,17 +4,17 @@ class HarmMachine {
   constructor() {
     this.valid_chords_prog = [
       ["C", "C", "F", "C", "Dm", "C", "G", "C"],
-      ["C", "Am", "F", "G"],
-      ["C", "Em", "F", "G"],
-      ["C", "F", "Am", "G"],
-      ["C", "F", "G", "F"],
-      ["C", "F", "C", "G"],
+      ["C", "Am", "F", "G", "C"],
+      ["C", "Em", "F", "G", "C"],
+      ["C", "F", "Am", "G", "C"],
+      ["C", "F", "G", "F", "C"],
+      ["C", "F", "C", "G", "C"],
       ["C", "F", "G", "Am"],
       ["C", "F", "Dm", "G"],
       ["C", "Am", "Dm", "G"],
-      ["C", "Dm", "Em", "F", "G"],
+      ["C", "Dm", "Em", "F", "G", "C"],
       ["C", "Em", "F", "Am"],
-      ["C", "E", "Am", "F"],
+      ["C", "E", "Am", "F", "C"],
       ["C", "G", "F", "G"],
       ["Dm", "G", "C", "F", "Bdim", "E", "Am"],
       ["Am", "C", "F", "E"],
@@ -33,7 +33,7 @@ class HarmMachine {
     ];
 
     this.valid_chords_prog = this.valid_chords_prog.concat(this.duplicateProg());
-    console.log(this.valid_chords_prog);
+    
     
   }
 
