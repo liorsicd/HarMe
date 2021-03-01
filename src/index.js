@@ -122,10 +122,26 @@ var sequencerElements = [];
 var chordsTranslation = null;
 var chordsToPlay = null;
 var sequencer = new Array(32);
-//var mouseDown = false;
+
 window.addEventListener("load", () => initialize());
 
 function initialize() {
+  var body = document.getElementById("main").shadowRoot.childNodes[2].childNodes[3].childNodes[1];
+  var content = document.getElementById("main").shadowRoot.childNodes[2].childNodes[3].childNodes[1].childNodes[7];
+  var seq = document.getElementById("stepSeq")
+  .shadowRoot.childNodes[2];
+  
+  body.removeAttribute("style");
+  body.setAttribute("style", "padding:40px;");
+  
+  content.removeAttribute("style");
+  content.setAttribute("style", "max-width:fit-content; justify-content: center;");
+  
+  
+  seq.removeAttribute("style");
+  seq.setAttribute("style", "height:250px; width:1200px;"); 
+
+
   //get sequencer object as list
   var listOfCols = document
     .getElementById("stepSeq")
@@ -159,15 +175,10 @@ function initialize() {
   }, "4n");
 
   document.getElementById("harme").addEventListener("click", () => harme());
-  document.getElementById("clear").addEventListener("click", () => window.location.reload())
-  /*
-  document.getElementById("stepSeq").addEventListener("mousedown",e =>{
-    mouseDown= true;
-  })
-  document.getElementById("stepSeq").addEventListener("mouseup",e =>{
-    mouseDown= false;
-  })
-  */
+  document
+    .getElementById("clear")
+    .addEventListener("click", () => window.location.reload());
+
   var cells = document
     .getElementById("stepSeq")
     .shadowRoot.childNodes[2].querySelectorAll(".cell");
@@ -177,9 +188,9 @@ function initialize() {
       seqClickHandler(e);
     });
 
-    item.addEventListener("mouseup", function(e){
+    item.addEventListener("mouseup", function (e) {
       unableAll();
-    })
+    });
   });
   document
     .querySelector("tone-step-sequencer")
@@ -261,21 +272,18 @@ function Translator(chordsLists) {
 
 function createChordTable() {
   const table = document.createElement("table");
-  table.setAttribute("border", "1");
+  table.setAttribute("border", "0");
   table.setAttribute("id", "chordsTable");
-  table.setAttribute("width", "600px");
   for (let i = 0; i < 3; i++) {
     let row = document.createElement("tr");
 
     for (let j = 0; j < 16; j++) {
       let col = document.createElement("td");
-      col.setAttribute("align", "center");
+      col.setAttribute("class", "chordTd");
       let btn = document.createElement("button");
       let value = chordsFromGen[i][j];
       btn.setAttribute("id", i + "," + j);
-      if (i === 0) {
-        btn.setAttribute("style", "background-color:blue;");
-      }
+      btn.setAttribute("class", "chordBtn");
       btn.appendChild(document.createTextNode(value));
       btn.addEventListener("click", function (e) {
         updateChordsToPlay(j, e.path[0], e.path[0].id[0]);
@@ -294,7 +302,20 @@ function updateChordsToPlay(index, button, row) {
   for (let i = 0; i < 3; i++) {
     let currentChord = document.getElementById(i + "," + index);
     if (i === Number(row)) {
-      currentChord.setAttribute("style", "background-color:blue;");
+      switch (i) {
+        default:
+          currentChord.setAttribute("style", "background-color:#04a1b5");
+          break;
+        case 0:
+          currentChord.setAttribute("style", "background-color:#04a1b5");
+          break;
+        case 1:
+          currentChord.setAttribute("style", "background-color:#7de39f");
+          break;
+        case 2:
+          currentChord.setAttribute("style", "background-color:#e1ec5f");
+          break;
+      }
     } else {
       currentChord.setAttribute("style", "background-color:none;");
     }
@@ -323,7 +344,6 @@ function seqClickHandler(cell) {
   lastCol = col;
 }
 
-
 function disableAll(col) {
   for (let i = 0; i < sequencerElements.length; i++) {
     for (let j = 0; j < sequencerElements[i].length; j++) {
@@ -334,7 +354,7 @@ function disableAll(col) {
   }
 }
 
-function unableAll(){
+function unableAll() {
   for (let i = 0; i < sequencerElements.length; i++) {
     for (let j = 0; j < sequencerElements[i].length; j++) {
       if (i !== lastCol) {
@@ -377,7 +397,7 @@ function harme() {
   var generator = new Generator();
 
   chordsFromGen = generator.generateHarmony(getNotesToHarmonize());
-  
+
   chordsTranslation = Translator(chordsFromGen);
 
   // update chords table in sequencer
@@ -388,7 +408,7 @@ function harme() {
       let button = document.getElementById(i + "," + j);
       button.textContent = chordsFromGen[i][j];
       if (i === 0) {
-        button.setAttribute("style", "background-color:blue;");
+        button.setAttribute("style", "background-color:#04a1b5");
       } else {
         button.setAttribute("style", "background-color:none;");
       }

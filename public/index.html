@@ -29,31 +29,83 @@
       tone-transport {
         margin-bottom: 10px;
       }
+
+      .stepSeq {
+        width: 80%;
+      }
+
+      body{
+      background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk79DMmIcJmn1OBzM0mZtK1HMXrsHb6iXXag&usqp=CAU);
+      background-repeat: repeat-x;
+      background-position: 0% 25%;
+      background-color:black;
+      }
+
+      .footer{ 
+       position: fixed;     
+       text-align: center;    
+       bottom: 0px; 
+       width: 20%;
+     }
+
+     .chordBtn{
+        width:73px;
+        height: 50px;
+        padding-left:0px;
+        padding-right:0px;
+        text-align:center;
+        border-width:thin;  
+        font-family:'Courier New';
+        font-size:20px;
+      }
+
+    .chordTd{
+      width:73px;
+      text-align: center;
+      margin: 2;
+      padding: 0;
+      border: 0;
+    }
+    
+    content {
+      width:1000px;
+    }
+  
+
+
+
+ 
+
     </style>
 
     <title>HarMe.</title>
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <img src="\logoHarme.jpg" width="100px" />
+    <h1 style= "color: white; text-align:center; font-family:'Courier New', Courier, monospace; font-size:70px; text-shadow:1px 1px 1px black,2px 2px 2px white ">HarMe. </h1>
+    <div class="footer" style= "color: white;font-family:'Courier New', Courier, monospace"> By Lior & Neta</div>
+    <div class="main-seq">
     <tone-example label="Step Sequencer" id="main">
      
-      <div id="content">
+      
         <tone-play-toggle></tone-play-toggle>
         <tone-slider
-          label="tempo"
+          label="Tempo"
           units="bpm"
           min="60"
           max="240"
           value="120"
         ></tone-slider>
-        <input type="button" id="harme" value="HarMe!!" />
-        <input type="button" id="clear" value="Clear" />
+        <input type="button" id="harme" value="HarMe!!" style= "color:white; font-family:'Courier New', Courier, monospace; background:black; padding: 15px 15px " />
+        <input type="button" id="clear" value="Clear" style= "color:white; font-family:'Courier New', Courier, monospace; background:black; padding: 15px 25px"  />
+        
         <tone-step-sequencer
           rows="8"
           columns="32"
           id="stepSeq"
+          class="stepSeq"
         ></tone-step-sequencer>
 
         <script id="main">
@@ -81,7 +133,8 @@
             );
 
         </script>
-      </div>
+      
     </tone-example>
+    </div>
   </body>
 </html>
