@@ -8,7 +8,7 @@ import * as Tone from "tone";
 //n-gram parameter
 const N = 3;
 //similarity parameter (0 to 8)
-const SIMILARITY_VAR = 4;
+const SIMILARITY_VAR = 2;
 class Generator {
   constructor() {
     this.melodyM = new MelodyMachine();
@@ -32,6 +32,7 @@ class Generator {
   generateHarmony(notes) {
     var harmonies = [];
     let i = 0;
+    debugger;
     while (i < 2) {
       var part = this.translateNumbersToNotes(notes).slice(i * 16, i * 16 + 16);
       var progressions = this.melodyM.getChordsForMelody(part);
@@ -39,7 +40,10 @@ class Generator {
       for (let p of progressions) {
         let prob = 1;
         for (let i = 1; i < p.length; i++) {
-          prob *= this.probMap[p[i - 1]][p[i]];
+          if(this.probMap[p[i - 1]][p[i]] !== undefined){
+            prob *= this.probMap[p[i - 1]][p[i]];
+          }
+          
         }
 
         if (!isNaN(prob)) {
@@ -50,8 +54,18 @@ class Generator {
       harm.sort((a, b) => b.prob - a.prob);
 
       let differentHarms = [harm[0]];
+
+      for (let h = harm.length - 1; h > 0; h--) {
+        if (harm[h].prob > 0) {
+          differentHarms.push(harm[h]);
+          differentHarms.push(harm[h / 2]);
+          break;
+        }
+      }
+      /*
+
+      }
       for (let h = 1; h < harm.length; h++) {
-        //debugger;
         if (
           this.IsNotTooSimilar(differentHarms[differentHarms.length - 1], harm[h])
         ) {
@@ -61,13 +75,12 @@ class Generator {
           }
         }
       }
+*/
 
-     
-     
       harmonies.push(differentHarms);
       i++;
     }
-
+    
     var concatHarm = [];
     for (let i = 0; i < harmonies[0].length; i++) {
       concatHarm.push(harmonies[0][i].chords.concat(harmonies[1][i].chords));

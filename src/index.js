@@ -23,6 +23,7 @@ const NOTE_TO_NUM = {
 const CHORD_FORM = {
   major: [0, 4, 7],
   minor: [0, 3, 7],
+  dim: [0, 3, 6],
 };
 
 //dummy from generator
@@ -126,21 +127,23 @@ var sequencer = new Array(32);
 window.addEventListener("load", () => initialize());
 
 function initialize() {
-  var body = document.getElementById("main").shadowRoot.childNodes[2].childNodes[3].childNodes[1];
-  var content = document.getElementById("main").shadowRoot.childNodes[2].childNodes[3].childNodes[1].childNodes[7];
-  var seq = document.getElementById("stepSeq")
-  .shadowRoot.childNodes[2];
-  
+  var body = document.getElementById("main").shadowRoot.childNodes[2]
+    .childNodes[3].childNodes[1];
+  var content = document.getElementById("main").shadowRoot.childNodes[2]
+    .childNodes[3].childNodes[1].childNodes[7];
+  var seq = document.getElementById("stepSeq").shadowRoot.childNodes[2];
+
   body.removeAttribute("style");
   body.setAttribute("style", "padding:40px;");
-  
-  content.removeAttribute("style");
-  content.setAttribute("style", "max-width:fit-content; justify-content: center;");
-  
-  
-  seq.removeAttribute("style");
-  seq.setAttribute("style", "height:250px; width:1200px;"); 
 
+  content.removeAttribute("style");
+  content.setAttribute(
+    "style",
+    "max-width:fit-content; justify-content: center;"
+  );
+
+  seq.removeAttribute("style");
+  seq.setAttribute("style", "height:250px; width:1200px;");
 
   //get sequencer object as list
   var listOfCols = document
@@ -204,6 +207,8 @@ function initialize() {
       sequencer[c][i] = false;
     }
   }
+
+
 }
 
 function playNote(row, time) {
@@ -231,25 +236,29 @@ function playChords(time) {
 }
 
 function chordTranslator(chordString) {
+  debugger;
   let chordBase = chordString[0];
   chordBase +=
     chordString.length > 1 && (chordString[1] === "b" || chordString[1] === "#")
       ? chordString[1]
       : "";
   let chord = [];
-  let len = chordString.length;
-  //major
-  if (len === 1 || (len === 2 && chordBase.length === 2)) {
-    for (let c of CHORD_FORM["major"]) {
-      chord.push(NOTE_TO_NUM[chordBase] + c);
-    }
-  } else if (
-    (len === 2 && chordString[1] === "m") ||
-    (len === 3 && chordString[2] === "m")
-  ) {
-    for (let c of CHORD_FORM["minor"]) {
-      chord.push(NOTE_TO_NUM[chordBase] + c);
-    }
+  let structure;
+
+  switch (true){
+    case chordString.endsWith('m'):
+      structure = CHORD_FORM["minor"] 
+      break;
+    case chordString.endsWith('dim'):
+      structure = CHORD_FORM["dim"] 
+      break;
+    default:
+      structure = CHORD_FORM["major"] 
+      break;
+  }
+  
+  for (let c of structure) {
+    chord.push(NOTE_TO_NUM[chordBase] + c);
   }
 
   for (let i = 0; i < chord.length; i++) {
