@@ -207,8 +207,6 @@ function initialize() {
       sequencer[c][i] = false;
     }
   }
-
-
 }
 
 function playNote(row, time) {
@@ -236,7 +234,6 @@ function playChords(time) {
 }
 
 function chordTranslator(chordString) {
-  debugger;
   let chordBase = chordString[0];
   chordBase +=
     chordString.length > 1 && (chordString[1] === "b" || chordString[1] === "#")
@@ -245,18 +242,18 @@ function chordTranslator(chordString) {
   let chord = [];
   let structure;
 
-  switch (true){
-    case chordString.endsWith('m'):
-      structure = CHORD_FORM["minor"] 
+  switch (true) {
+    case chordString.endsWith("m"):
+      structure = CHORD_FORM["minor"];
       break;
-    case chordString.endsWith('dim'):
-      structure = CHORD_FORM["dim"] 
+    case chordString.endsWith("dim"):
+      structure = CHORD_FORM["dim"];
       break;
     default:
-      structure = CHORD_FORM["major"] 
+      structure = CHORD_FORM["major"];
       break;
   }
-  
+
   for (let c of structure) {
     chord.push(NOTE_TO_NUM[chordBase] + c);
   }
@@ -272,7 +269,9 @@ function Translator(chordsLists) {
   let translatedChords = {};
   for (let l of chordsLists) {
     for (let c of l) {
-      translatedChords[c] = chordTranslator(c);
+      if (translatedChords[c] === undefined) {
+        translatedChords[c] = chordTranslator(c);
+      }
     }
   }
 
