@@ -37,6 +37,7 @@ class HarmMachine {
     );
   }
 
+  //returns chord progression of 2-times of each chord
   duplicateProg() {
     var dupProgs = [];
     for (let prog of this.valid_chords_prog) {
@@ -49,6 +50,8 @@ class HarmMachine {
     }
     return dupProgs;
   }
+
+  
   getNgram(sequence, n) {
     var ngramsArray = [];
     for (var i = 0; i < sequence.length - (n - 1); i++) {
@@ -77,7 +80,7 @@ class HarmMachine {
       }
       result[x].push(y);
     }
-    // { 60: [62, 62, 62, 65], 64: [64, 64, 62, 62]}
+    
     Object.keys(result).map((key) => {
       result[key] = this.getProbabilities(result[key]);
     });

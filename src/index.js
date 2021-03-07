@@ -84,34 +84,6 @@ var chordsFromGen = [
   ],
 ];
 var currentCol = 0;
-/*
-const midiNotes = []
-midiNotes.push(await Midi.fromUrl("/src/midi/C3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/D3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/E3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/F3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/G3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/A3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/B3.mid"));
-midiNotes.push(await Midi.fromUrl("/src/midi/C4.mid"));
-
-
-const keys = new Tone.Players({
-  urls: {
-    0: "C3.mp3",
-    1: "D3.mp3",
-    2: "E3.mp3",
-    3: "F3.mp3",
-    4: "G3.mp3",
-    5: "A3.mp3",
-    6: "B3.mp3",
-    7: "C4.mp3",
-  },
-  fadeOut: "64n",
-  baseUrl: "/src/midi",
-}).toDestination();
-
-*/
 var rev = new Tone.Reverb(2).toDestination();
 var synth = new Tone.PolySynth().toDestination();
 var chordSynth = new Tone.PolySynth().toDestination().connect(rev);
@@ -126,6 +98,7 @@ var sequencer = new Array(32);
 
 window.addEventListener("load", () => initialize());
 
+//initialize app page and settings
 function initialize() {
   var body = document.getElementById("main").shadowRoot.childNodes[2]
     .childNodes[3].childNodes[1];
@@ -209,9 +182,8 @@ function initialize() {
   }
 }
 
+//get row of note and time and play the note(C major scale)
 function playNote(row, time) {
-  // keys.player(row).start(time, 0, "16t");
-
   let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
   note -= note === 73 ? 1 : 0;
   synth = new Tone.PolySynth().toDestination();
@@ -222,6 +194,7 @@ function playNote(row, time) {
   );
 }
 
+//get time and play the chord in current col of sequencer
 function playChords(time) {
   if (chordsTranslation !== null) {
     let chordToPlay = chordsTranslation[chordsToPlay[currentCol]];
@@ -233,6 +206,8 @@ function playChords(time) {
   }
 }
 
+//get chord name as string
+//return chord as list of numbers
 function chordTranslator(chordString) {
   let chordBase = chordString[0];
   chordBase +=
@@ -265,6 +240,8 @@ function chordTranslator(chordString) {
   return chord;
 }
 
+//get list of chord lists
+//return dict of translated chords
 function Translator(chordsLists) {
   let translatedChords = {};
   for (let l of chordsLists) {
@@ -278,6 +255,7 @@ function Translator(chordsLists) {
   return translatedChords;
 }
 
+//generate the chord table
 function createChordTable() {
   const table = document.createElement("table");
   table.setAttribute("border", "0");
@@ -294,7 +272,7 @@ function createChordTable() {
       btn.setAttribute("class", "chordBtn");
       btn.appendChild(document.createTextNode(value));
       btn.addEventListener("click", function (e) {
-        updateChordsToPlay(j, e.path[0], e.path[0].id[0]);
+        updateChordsToPlay(j, e.path[0].id[0]);
       });
       col.appendChild(btn);
 
@@ -305,10 +283,11 @@ function createChordTable() {
   document.getElementById("main").appendChild(table);
 }
 
-function updateChordsToPlay(index, button, row) {
-  chordsToPlay[index] = chordsFromGen[row][index];
+//get row and col of chosen chord and update the selected chord
+function updateChordsToPlay(col, row) {
+  chordsToPlay[col] = chordsFromGen[row][col];
   for (let i = 0; i < 3; i++) {
-    let currentChord = document.getElementById(i + "," + index);
+    let currentChord = document.getElementById(i + "," + col);
     if (i === Number(row)) {
       switch (i) {
         default:
@@ -330,6 +309,7 @@ function updateChordsToPlay(index, button, row) {
   }
 }
 
+//sequencer cell click handler (to avoid from user choose multiple cells in the same col)
 function seqClickHandler(cell) {
   var parent = cell.path[0].parentNode;
   var row = Array.prototype.indexOf.call(parent.children, cell.path[0]);
@@ -371,6 +351,9 @@ function unableAll() {
     }
   }
 }
+
+//get col number
+//return the filled row or -1 if empty.
 function getFilledCellIndex(col) {
   for (let i = 0; i < sequencer[col].length; i++) {
     if (sequencer[col][i] === true) {
@@ -380,6 +363,7 @@ function getFilledCellIndex(col) {
   return -1;
 }
 
+//return list of notes that selected on sequencer (-1 for empty cell)
 function getNotesToHarmonize() {
   var notesToHarm = [];
   for (let i = 0; i < sequencer.length; i++) {
@@ -400,12 +384,10 @@ function harme() {
   if (chordsToPlay === null) {
     createChordTable();
   }
-  //send notesToHarmonize to generator
-  // get list of chords
+
   var generator = new Generator();
-
+  // get list of chords
   chordsFromGen = generator.generateHarmony(getNotesToHarmonize());
-
   chordsTranslation = Translator(chordsFromGen);
 
   // update chords table in sequencer
@@ -422,6 +404,6 @@ function harme() {
       }
     }
   }
-  //console.log(chordsToPlay);
+
   chordsTranslation = Translator(chordsFromGen);
 }

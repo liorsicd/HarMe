@@ -92,10 +92,11 @@ class MelodyMachine {
   cartesian = (...a) =>
     a.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
 
+  //get list of notes - input melody
+  //return - all possible chords progressions.
   getChordsForMelody(notes) {
     let possibleChordsList = [];
-    //get list of notes - input melody
-    //return - all possible chords progressions.
+   
     for (let i = 0; i < notes.length; i++) {
       if (i % 2 === 1) continue;
       let possibleChords = this.notesToChordList.find(
@@ -116,18 +117,8 @@ class MelodyMachine {
     for (let i = 2; i < possibleChordsList.length; i++) {
       progressions = this.cartesian(progressions, possibleChordsList[i]);
     }
-
+    
     return progressions;
   }
-
-  // getNMaxLikelyChords(notes, N) {
-  //   let ans = this.notesToChordList.find(
-  //     (e) => e.notes[0] === notes[0] && e.notes[1] === notes[1]
-  //   );
-
-  //   ans = Object.keys(ans.chords).sort((a, b) => ans.chords[b] - ans.chords[a]);
-  //   ans = N < 0 || N >= ans.length ? ans : ans.slice(0, N);
-  //   return ans;
-  // }
 }
 export default MelodyMachine;
