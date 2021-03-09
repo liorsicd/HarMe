@@ -6,9 +6,9 @@ import MelodyMachine from "./melodyMachine.js";
 import * as Tone from "tone";
 
 //n-gram parameter
-const N = 3;
+const N = 4;
 //similarity parameter (0 to 8)
-const SIMILARITY_VAR = 3;
+const SIMILARITY_VAR = 0;
 class Generator {
   constructor() {
     this.melodyM = new MelodyMachine();
@@ -33,6 +33,7 @@ class Generator {
   //get list of notes as numbers
   // return list of 3 most likely harmonies that match to those notes
   generateHarmony(notes) {
+    console.log(this.probMap);
     var harmonies = [];
     let i = 0;
 
@@ -40,6 +41,7 @@ class Generator {
       var part = this.translateNumbersToNotes(notes).slice(i * 16, i * 16 + 16);
       var progressions = this.melodyM.getChordsForMelody(part);
       var harm = [];
+
       for (let p of progressions) {
         let prob = 1;
         for (let j = 1; j < p.length; j++) {
@@ -57,19 +59,20 @@ class Generator {
       }
 
       harm.sort((a, b) => b.prob - a.prob);
-
       let differentHarms = [harm[0]];
       for (let h = 1; h < harm.length; h++) {
-        if (
-          this.IsNotTooSimilar(
-            differentHarms[differentHarms.length - 1],
-            harm[h]
-          )
-        ) {
-          differentHarms.push(harm[h]);
-          if (differentHarms.length === 3) {
+        let notTooSimilar = null;
+        for (let d = 0; d < differentHarms.length; d++) {
+          notTooSimilar = this.IsNotTooSimilar(differentHarms[d], harm[h]);
+          if (notTooSimilar === false) {
             break;
           }
+        }
+        if (notTooSimilar) {
+          differentHarms.push(harm[h]);
+        }
+        if (differentHarms.length === 3) {
+          break;
         }
       }
 

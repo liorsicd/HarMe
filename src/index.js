@@ -87,10 +87,9 @@ var currentCol = 0;
 var rev = new Tone.Reverb(2).toDestination();
 var synth = new Tone.PolySynth().toDestination();
 var chordSynth = new Tone.PolySynth().toDestination().connect(rev);
-synth.volume.value = 10;
-var lastCol = -1;
+//synth.volume.value = 5;
 
-chordSynth.volume.value = -5;
+chordSynth.volume.value = -8;
 var sequencerElements = [];
 var chordsTranslation = null;
 var chordsToPlay = null;
@@ -184,14 +183,20 @@ function initialize() {
 
 //get row of note and time and play the note(C major scale)
 function playNote(row, time) {
-  let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
-  note -= note === 73 ? 1 : 0;
-  synth = new Tone.PolySynth().toDestination();
-  synth.triggerAttackRelease(
-    Tone.Frequency(note, "midi").toNote(),
-    "16t",
-    time
-  );
+  // synth = new Tone.PolySynth().toDestination();
+  if (time !== -1) {
+    let note = row < 3 ? 60 + row * 2 : 59 + row * 2;
+    note -= note === 73 ? 1 : 0;
+    synth.triggerAttackRelease(
+      Tone.Frequency(note, "midi").toNote(),
+      "16t",
+      time
+    );
+  } else {
+    let note = row < 5 ? 71 - (row - 1) * 2 : 74 - row * 2;
+    note -= note === 73 ? 1 : 0;
+    synth.triggerAttackRelease(Tone.Frequency(note, "midi").toNote(), "16t");
+  }
 }
 
 //get time and play the chord in current col of sequencer
@@ -328,14 +333,14 @@ function seqClickHandler(cell) {
       }
     }
   }
-  disableAll(col);
-  lastCol = col;
+  playNote(row, -1);
+  disableAll(col, row);
 }
 
-function disableAll(col) {
+function disableAll(col, row) {
   for (let i = 0; i < sequencerElements.length; i++) {
     for (let j = 0; j < sequencerElements[i].length; j++) {
-      if (i !== col) {
+      if (i !== col || j !== row) {
         sequencerElements[i][j].setAttribute("disabled", null);
       }
     }
@@ -344,10 +349,13 @@ function disableAll(col) {
 
 function unableAll() {
   for (let i = 0; i < sequencerElements.length; i++) {
-    for (let j = 0; j < sequencerElements[i].length; j++) {
-      if (i !== lastCol) {
+    let filledIndex = getFilledCellIndex(i);
+    if (filledIndex === -1) {
+      for (let j = 0; j < sequencerElements[i].length; j++) {
         sequencerElements[i][j].removeAttribute("disabled", null);
       }
+    } else {
+      sequencerElements[i][filledIndex].removeAttribute("disabled", null);
     }
   }
 }
