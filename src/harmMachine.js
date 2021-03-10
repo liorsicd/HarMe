@@ -80,7 +80,7 @@ class HarmMachine {
       }
       result[x].push(y);
     }
-    
+    // eslint-disable-next-line
     Object.keys(result).map((key) => {
       result[key] = this.getProbabilities(result[key]);
     });
@@ -91,6 +91,7 @@ class HarmMachine {
   getProbabilities(sequence) {
     let freq = this.getFrequencyMap(sequence);
     let length = Object.values(freq).reduce((a, b) => a + b);
+    // eslint-disable-next-line
     Object.keys(freq).map((key) => {
       freq[key] /= length; // 3 > 3/4, 1 > 1/4
     });

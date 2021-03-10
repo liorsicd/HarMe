@@ -267,7 +267,6 @@ function createChordTable() {
   table.setAttribute("id", "chordsTable");
   for (let i = 0; i < 3; i++) {
     let row = document.createElement("tr");
-
     for (let j = 0; j < 16; j++) {
       let col = document.createElement("td");
       col.setAttribute("class", "chordTd");
